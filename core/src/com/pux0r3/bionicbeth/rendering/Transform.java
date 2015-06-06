@@ -50,6 +50,16 @@ public class Transform {
 		return worldTransform;
 	}
 
+	public Matrix4 getInverseWorldTransform() {
+		if (_parent == null) {
+			return getInverseTransform();
+		}
+
+		Matrix4 inverseTransform = getInverseTransform().cpy();
+		inverseTransform.mul(_parent.getInverseWorldTransform());
+		return inverseTransform;
+	}
+
 	public void setLocalPosition(Vector3 localPosition) {
 		_localTransform.setTranslation(localPosition);
 	}

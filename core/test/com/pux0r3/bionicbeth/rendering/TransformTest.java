@@ -113,4 +113,22 @@ public class TransformTest {
 		t.getInverseTransform().getTranslation(storedInversePosition);
 		Assert.assertEquals(inversePosition, storedInversePosition);
 	}
+
+	@Test
+	public void testGeneratesInverseWorldTransform() throws Exception {
+		Vector3 parentPosition = new Vector3(1f, 2f, 3f);
+		Vector3 childPosition = new Vector3(3f, 2f, 1f);
+		Vector3 inversePosition = new Vector3(-4f, -4f, -4f);
+
+		Transform parent = new Transform();
+		Transform child = new Transform();
+		child.setParent(parent);
+
+		parent.setLocalPosition(parentPosition);
+		child.setLocalPosition(childPosition);
+
+		Vector3 storedInverseWorldPosition = new Vector3();
+		child.getInverseWorldTransform().getTranslation(storedInverseWorldPosition);
+		Assert.assertEquals(inversePosition, storedInverseWorldPosition);
+	}
 }
