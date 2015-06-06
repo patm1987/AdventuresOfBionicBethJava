@@ -1,11 +1,18 @@
 package com.pux0r3.bionicbeth.rendering;
 
+import com.badlogic.gdx.backends.headless.HeadlessNativesLoader;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TransformTest {
+	@Before
+	public void setUp() throws Exception {
+		HeadlessNativesLoader.load();
+	}
+
 	@Test
 	public void testCTor() {
 		Transform t = new Transform();
@@ -79,7 +86,7 @@ public class TransformTest {
 	public void testGeneratesWorldPosition() throws Exception {
 		Vector3 parentPosition = new Vector3(1f, 2f, 3f);
 		Vector3 childPosition = new Vector3(3f, 2f, 1f);
-		Vector3 worldPosition = parentPosition.add(childPosition);
+		Vector3 worldPosition = parentPosition.cpy().add(childPosition);
 
 		Transform parent = new Transform();
 		Transform child = new Transform();
@@ -93,5 +100,17 @@ public class TransformTest {
 		child.getWorldPosition().getTranslation(storedWorldPosition);
 
 		Assert.assertEquals(worldPosition, storedWorldPosition);
+	}
+
+	@Test
+	public void testGeneratesInverseTransform() throws Exception {
+		Vector3 position = new Vector3(1f, 2f, 3f);
+		Vector3 inversePosition = new Vector3(-1f, -2f, -3f);
+		Transform t = new Transform();
+		t.setLocalPosition(position);
+
+		Vector3 storedInversePosition = new Vector3();
+		t.getInverseTransform().getTranslation(storedInversePosition);
+		Assert.assertEquals(inversePosition, storedInversePosition);
 	}
 }

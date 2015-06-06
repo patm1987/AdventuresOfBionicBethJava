@@ -36,8 +36,8 @@ public class Transform {
 		return _localTransform;
 	}
 
-	public void setLocalPosition(Vector3 localPosition) {
-		_localTransform.setTranslation(localPosition);
+	public Matrix4 getInverseTransform() {
+		return _localTransform.cpy().inv();
 	}
 
 	public Matrix4 getWorldPosition() {
@@ -48,5 +48,9 @@ public class Transform {
 		Matrix4 worldTransform = _parent.getWorldPosition().cpy();
 		worldTransform.mul(_localTransform);
 		return worldTransform;
+	}
+
+	public void setLocalPosition(Vector3 localPosition) {
+		_localTransform.setTranslation(localPosition);
 	}
 }
