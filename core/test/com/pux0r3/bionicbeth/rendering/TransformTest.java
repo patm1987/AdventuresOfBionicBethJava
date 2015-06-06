@@ -74,4 +74,24 @@ public class TransformTest {
 
 		Assert.assertEquals(localPosition, storedTransform);
 	}
+
+	@Test
+	public void testGeneratesWorldPosition() throws Exception {
+		Vector3 parentPosition = new Vector3(1f, 2f, 3f);
+		Vector3 childPosition = new Vector3(3f, 2f, 1f);
+		Vector3 worldPosition = parentPosition.add(childPosition);
+
+		Transform parent = new Transform();
+		Transform child = new Transform();
+
+		parent.setLocalPosition(parentPosition);
+		child.setLocalPosition(childPosition);
+
+		child.setParent(parent);
+
+		Vector3 storedWorldPosition = new Vector3();
+		child.getWorldPosition().getTranslation(storedWorldPosition);
+
+		Assert.assertEquals(worldPosition, storedWorldPosition);
+	}
 }

@@ -39,4 +39,14 @@ public class Transform {
 	public void setLocalPosition(Vector3 localPosition) {
 		_localTransform.setTranslation(localPosition);
 	}
+
+	public Matrix4 getWorldPosition() {
+		if (_parent == null) {
+			return _localTransform;
+		}
+
+		Matrix4 worldTransform = _parent.getWorldPosition().cpy();
+		worldTransform.mul(_localTransform);
+		return worldTransform;
+	}
 }
