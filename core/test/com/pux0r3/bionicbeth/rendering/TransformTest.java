@@ -1,5 +1,7 @@
 package com.pux0r3.bionicbeth.rendering;
 
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -52,5 +54,24 @@ public class TransformTest {
 
 		Assert.assertFalse(parent.getChildren().contains(child));
 		Assert.assertEquals(null, child.getParent());
+	}
+
+	@Test
+	public void testMatrixCreatedWithIdentity() throws Exception {
+		Transform t = new Transform();
+		Assert.assertArrayEquals(t.getLocalTransform().val, new Matrix4().val, 0.001f);
+	}
+
+	@Test
+	public void testCanSetLocalPosition() throws Exception {
+		Vector3 localPosition = new Vector3(1f, 2f, 3f);
+		Transform t = new Transform();
+
+		t.setLocalPosition(localPosition);
+
+		Vector3 storedTransform = new Vector3();
+		t.getLocalTransform().getTranslation(storedTransform);
+
+		Assert.assertEquals(localPosition, storedTransform);
 	}
 }
