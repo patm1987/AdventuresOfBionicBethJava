@@ -1,24 +1,30 @@
 package com.pux0r3.bionicbeth.rendering;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Created by Patrick on 2/15/2015.
  */
 public class Transform {
-    private Transform m_parent;
+	private Transform _parent;
+	private ArrayList<Transform> _children = new ArrayList<>();
 
-    public void setParent(Transform parent) {
-        this.m_parent = parent;
-    }
+	public void setParent(Transform parent) {
+		if (_parent != null) {
+			_parent._children.remove(this);
+		}
+		_parent = parent;
+		if (_parent != null) {
+			_parent._children.add(this);
+		}
+	}
 
-    public Transform getM_parent() {
-        return m_parent;
-    }
+	public Transform getParent() {
+		return _parent;
+	}
 
-    public void setM_parent(Transform m_parent) {
-        this.m_parent = m_parent;
-    }
-
-    public Transform getParent() {
-        return m_parent;
-    }
+	public Collection<Transform> getChildren() {
+		return _children;
+	}
 }
