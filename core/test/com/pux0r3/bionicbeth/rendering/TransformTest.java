@@ -4,6 +4,7 @@ import com.badlogic.gdx.backends.headless.HeadlessNativesLoader;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.pux0r3.bionicbeth.math.MathUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -157,7 +158,7 @@ public class TransformTest {
 		t.getLocalTransform().getRotation(stored);
 
 		// equals with an epsilon
-		Assert.assertTrue(expected.add(stored.mul(-1f)).len() < kEpsilon);
+		Assert.assertTrue(MathUtils.EqualsEpsilon(expected, stored, kEpsilon));
 	}
 
 	// todo: test bubble down invalidation
