@@ -2,12 +2,16 @@ package com.pux0r3.bionicbeth.rendering;
 
 import com.badlogic.gdx.backends.headless.HeadlessNativesLoader;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TransformTest {
+
+	public static final float kEpsilon = 0.001f;
+
 	@Before
 	public void setUp() throws Exception {
 		HeadlessNativesLoader.load();
@@ -66,7 +70,7 @@ public class TransformTest {
 	@Test
 	public void testMatrixCreatedWithIdentity() throws Exception {
 		Transform t = new Transform();
-		Assert.assertArrayEquals(t.getLocalTransform().val, new Matrix4().val, 0.001f);
+		Assert.assertArrayEquals(t.getLocalTransform().val, new Matrix4().val, kEpsilon);
 	}
 
 	@Test
@@ -97,7 +101,7 @@ public class TransformTest {
 		child.setParent(parent);
 
 		Vector3 storedWorldPosition = new Vector3();
-		child.getWorldPosition().getTranslation(storedWorldPosition);
+		child.getWorldTransform().getTranslation(storedWorldPosition);
 
 		Assert.assertEquals(worldPosition, storedWorldPosition);
 	}
@@ -131,4 +135,30 @@ public class TransformTest {
 		child.getInverseWorldTransform().getTranslation(storedInverseWorldPosition);
 		Assert.assertEquals(inversePosition, storedInverseWorldPosition);
 	}
+
+	@Test
+	public void testQuaternionIdentity() throws Exception {
+		Quaternion expected = new Quaternion();
+		Transform t = new Transform();
+
+		Quaternion stored = new Quaternion();
+		t.getLocalTransform().getRotation(stored);
+
+		Assert.assertEquals(expected, stored);
+	}
+
+	@Test
+	public void testSetQuaternion() throws Exception {
+		Quaternion expected = new Quaternion(new Vector3(0f, 1f, 0f), 60);
+		Transform t = new Transform();
+		t.setLocalRotation(expected);
+
+		Quaternion stored = new Quaternion();
+		t.getLocalTransform().getRotation(stored);
+
+		// equals with an epsilon
+		Assert.assertTrue(expected.add(stored.mul(-1f)).len() < kEpsilon);
+	}
+
+	// todo: test bubble down invalidation
 }

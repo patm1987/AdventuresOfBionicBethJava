@@ -1,6 +1,7 @@
 package com.pux0r3.bionicbeth.rendering;
 
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
@@ -12,7 +13,15 @@ import java.util.Collection;
 public class Transform {
 	private Transform _parent = null;
 	private ArrayList<Transform> _children = new ArrayList<>();
-	private Matrix4 _localTransform = new Matrix4();
+
+	private Vector3 _position = new Vector3();
+	private Quaternion _rotation = new Quaternion();
+
+	private Matrix4 _localTransform;
+	private Matrix4 _inverseLocalTransform;
+
+	private Matrix4 _worldTransform;
+	private Matrix4 _inverseWorldTransform;
 
 	public void setParent(Transform parent) {
 		if (_parent != null) {
@@ -33,34 +42,52 @@ public class Transform {
 	}
 
 	public Matrix4 getLocalTransform() {
+		if (_localTransform == null) {
+			_localTransform = new Matrix4(_position, _rotation, new Vector3(1f, 1f, 1f));
+		}
 		return _localTransform;
 	}
 
 	public Matrix4 getInverseTransform() {
-		return _localTransform.cpy().inv();
+		if (_inverseLocalTransform == null) {
+			_inverseLocalTransform = new Matrix4(
+					new Vector3(-_position.x, -_position.y, -_position.z),
+					new Quaternion(),
+					new Vector3(1f, 1f, 1f));
+		}
+		return _inverseLocalTransform;
 	}
 
-	public Matrix4 getWorldPosition() {
-		if (_parent == null) {
-			return _localTransform;
+	public Matrix4 getWorldTransform() {
+		if (_worldTransform == null) {
+			if (_parent == null) {
+				_worldTransform = getLocalTransform().cpy();
+			} else {
+				_worldTransform = _parent.getWorldTransform().cpy();
+				_worldTransform.mul(getLocalTransform());
+			}
 		}
 
-		Matrix4 worldTransform = _parent.getWorldPosition().cpy();
-		worldTransform.mul(_localTransform);
-		return worldTransform;
+		return _worldTransform;
 	}
 
 	public Matrix4 getInverseWorldTransform() {
-		if (_parent == null) {
-			return getInverseTransform();
+		if (_inverseWorldTransform == null) {
+			if (_parent == null) {
+				_inverseWorldTransform = getInverseTransform().cpy();
+			} else {
+				_inverseWorldTransform = getInverseTransform().cpy();
+				_inverseWorldTransform.mul(_parent.getInverseWorldTransform());
+			}
 		}
-
-		Matrix4 inverseTransform = getInverseTransform().cpy();
-		inverseTransform.mul(_parent.getInverseWorldTransform());
-		return inverseTransform;
+		return _inverseWorldTransform;
 	}
 
 	public void setLocalPosition(Vector3 localPosition) {
-		_localTransform.setTranslation(localPosition);
+		_position = localPosition.cpy();
+	}
+
+	public void setLocalRotation(Quaternion localRotation) {
+		_rotation = localRotation.cpy();
 	}
 }
