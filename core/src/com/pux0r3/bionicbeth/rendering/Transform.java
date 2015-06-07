@@ -52,7 +52,7 @@ public class Transform {
 		if (_inverseLocalTransform == null) {
 			_inverseLocalTransform = new Matrix4(
 					new Vector3(-_position.x, -_position.y, -_position.z),
-					new Quaternion(),
+					_rotation.cpy().conjugate(),
 					new Vector3(1f, 1f, 1f));
 		}
 		return _inverseLocalTransform;

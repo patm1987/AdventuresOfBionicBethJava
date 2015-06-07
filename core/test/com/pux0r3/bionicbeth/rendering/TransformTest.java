@@ -161,5 +161,21 @@ public class TransformTest {
 		Assert.assertTrue(MathUtils.EqualsEpsilon(expected, stored, kEpsilon));
 	}
 
+	@Test
+	public void testStoresInverseQuaternion() throws Exception {
+		Vector3 axis = new Vector3(0f, 1f, 0f);
+		float angle = 45f;
+		Quaternion quat = new Quaternion(axis, angle);
+		Quaternion inv = new Quaternion(axis, -angle);
+
+		Transform t = new Transform();
+		t.setLocalRotation(quat);
+
+		Quaternion stored = new Quaternion();
+		t.getInverseTransform().getRotation(stored);
+
+		Assert.assertTrue(MathUtils.EqualsEpsilon(inv, stored, kEpsilon));
+	}
+
 	// todo: test bubble down invalidation
 }
