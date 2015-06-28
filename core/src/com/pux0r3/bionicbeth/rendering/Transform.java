@@ -85,9 +85,41 @@ public class Transform {
 
 	public void setLocalPosition(Vector3 localPosition) {
 		_position = localPosition.cpy();
+		invalidateChildren();
 	}
 
 	public void setLocalRotation(Quaternion localRotation) {
 		_rotation = localRotation.cpy();
+		invalidateChildren();
+	}
+
+	private void invalidateChildren() {
+		boolean invalidated = false;
+
+		if (_localTransform != null) {
+			_localTransform = null;
+			invalidated = true;
+		}
+
+		if (_inverseLocalTransform != null) {
+			_inverseLocalTransform = null;
+			invalidated = true;
+		}
+
+		if (_worldTransform != null) {
+			_worldTransform = null;
+			invalidated = true;
+		}
+
+		if (_inverseWorldTransform != null) {
+			_inverseWorldTransform = null;
+			invalidated = true;
+		}
+
+		if (invalidated) {
+			for(Transform child: _children) {
+				child.invalidateChildren();
+			}
+		}
 	}
 }
