@@ -268,11 +268,45 @@ public class TransformTest {
 		Vector3 transformAxis = new Vector3(0f, 0f, 1f);
 		float transformAngle = 3;
 		Quaternion transformRotation = new Quaternion(transformAxis, transformAngle);
+		Transform transformTransform = new Transform();
+		transformTransform.setLocalPosition(transformPosition);
+		transformTransform.setLocalRotation(transformRotation);
 
-		Transform parent1;
-		Transform parent2;
-		Transform transform;
-		Transform child;
+		Vector3 childPosition = new Vector3(7f, 10f, .1f);
+		Vector3 childAxis = new Vector3(0, 0, 1f);
+		float childAngle = 6.1f;
+		Quaternion childRotation = new Quaternion(childAxis, childAngle);
+		Transform childTransform = new Transform();
+		childTransform.setLocalPosition(childPosition);
+		childTransform.setLocalRotation(childRotation);
+
+		Matrix4 transformAndChild = new Matrix4(
+				transformPosition,
+				transformRotation,
+				new Vector3(1f, 1f, 1f));
+		transformAndChild.mul(
+				new Matrix4(childPosition, childRotation, new Vector3(1f, 1f, 1f)));
+
+		Matrix4 transformStack1 = new Matrix4(
+				parent1Position,
+				parent1Rotation,
+				new Vector3(1f, 1f, 1f));
+		transformStack1.mul(transformAndChild);
+
+		Matrix4 transformStack2 = new Matrix4(
+				parent2Position,
+				parent2Rotation,
+				new Vector3(1f, 1f, 1f));
+		transformStack2.mul(transformAndChild);
+
+		childTransform.setParent(transformTransform);
+		transformTransform.setParent(parent1Transform);
+		Assert.assertTrue(
+				approximatelyEqual(transformStack1, childTransform.getWorldTransform(), kEpsilon));
+
+		transformTransform.setParent(parent2Transform);
+		Assert.assertTrue(
+				approximatelyEqual(transformStack2, childTransform.getWorldTransform(), kEpsilon));
 	}
 
 	public boolean approximatelyEqual(Matrix4 mat0, Matrix4 mat1, float epsilon) {

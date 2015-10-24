@@ -31,6 +31,7 @@ public class Transform {
 		if (_parent != null) {
 			_parent._children.add(this);
 		}
+		invalidateChildren();
 	}
 
 	public Transform getParent() {
