@@ -246,6 +246,35 @@ public class TransformTest {
 		Assert.assertTrue(approximatelyEqual(expectedInvNewWorld, child.getInverseWorldTransform(), kEpsilon));
 	}
 
+	@Test
+	public void testBubblesUpParentChanges() throws Exception {
+		Vector3 parent1Position = new Vector3(1f, 2f, 3f);
+		Vector3 parent1Axis = new Vector3(1f, 0f, 0f);
+		float parent1Angle = .3f;
+		Quaternion parent1Rotation = new Quaternion(parent1Axis, parent1Angle);
+		Transform parent1Transform = new Transform();
+		parent1Transform.setLocalPosition(parent1Position);
+		parent1Transform.setLocalRotation(parent1Rotation);
+
+		Vector3 parent2Position = new Vector3(3f, 2f, 1f);
+		Vector3 parent2Axis = new Vector3(0f, 1f, 0f);
+		float parent2Angle = .5f;
+		Quaternion parent2Rotation = new Quaternion(parent2Axis, parent2Angle);
+		Transform parent2Transform = new Transform();
+		parent2Transform.setLocalPosition(parent2Position);
+		parent2Transform.setLocalRotation(parent2Rotation);
+
+		Vector3 transformPosition = new Vector3(10f, 9f, .3f);
+		Vector3 transformAxis = new Vector3(0f, 0f, 1f);
+		float transformAngle = 3;
+		Quaternion transformRotation = new Quaternion(transformAxis, transformAngle);
+
+		Transform parent1;
+		Transform parent2;
+		Transform transform;
+		Transform child;
+	}
+
 	public boolean approximatelyEqual(Matrix4 mat0, Matrix4 mat1, float epsilon) {
 		for(int i = 0; i < 16; i++) {
 			float diff = Math.abs(mat0.getValues()[i] - mat1.getValues()[i]);
