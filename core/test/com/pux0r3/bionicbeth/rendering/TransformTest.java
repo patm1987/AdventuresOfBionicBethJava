@@ -318,5 +318,4 @@ public class TransformTest {
 		}
 		return true;
 	}
-// todo: test bubble down invalidation when changing parents
 }
