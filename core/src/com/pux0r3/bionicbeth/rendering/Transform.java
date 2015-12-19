@@ -49,6 +49,10 @@ public class Transform {
 		return _localTransform;
 	}
 
+	/*!
+	 * Gets the matrix that takes an object in world space into local space
+	 * \return the world to local transform represented by this matrix
+	 */
 	public Matrix4 getInverseTransform() {
 		if (_inverseLocalTransform == null) {
 			_inverseLocalTransform = new Matrix4(
@@ -59,6 +63,10 @@ public class Transform {
 		return _inverseLocalTransform;
 	}
 
+	/*!
+	 * Gets the matrix that represents an object in world space
+	 * \return	the local to world transform represented by this matrix
+	 */
 	public Matrix4 getWorldTransform() {
 		if (_worldTransform == null) {
 			if (_parent == null) {
