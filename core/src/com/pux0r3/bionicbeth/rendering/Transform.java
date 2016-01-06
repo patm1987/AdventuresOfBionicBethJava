@@ -9,6 +9,8 @@ import java.util.Collection;
 
 /**
  * Created by Patrick on 2/15/2015.
+ *
+ * TODO: I should change the get transforms to behave like the get vectors
  */
 public class Transform {
 	private Transform _parent = null;
@@ -130,5 +132,13 @@ public class Transform {
 				child.invalidateChildren();
 			}
 		}
+	}
+
+	public void getLocalPosition(Vector3 outPosition) {
+		outPosition.set(_position);
+	}
+
+	public void getWorldPosition(Vector3 outPosition) {
+		getWorldTransform().getTranslation(outPosition);
 	}
 }

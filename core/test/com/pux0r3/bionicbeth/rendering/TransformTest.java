@@ -309,6 +309,52 @@ public class TransformTest {
 				approximatelyEqual(transformStack2, childTransform.getWorldTransform(), kEpsilon));
 	}
 
+	@Test
+	public void testCanRetrieveLocalPosition() throws Exception {
+		Vector3 testPosition = new Vector3(1.f, 2.f, 3.f);
+		Vector3 outPosition = new Vector3();
+
+		Transform transform = new Transform();
+		transform.getLocalPosition(outPosition);
+		Assert.assertEquals(outPosition, Vector3.Zero);
+
+		transform.setLocalPosition(testPosition);
+		transform.getLocalPosition(outPosition);
+		Assert.assertEquals(outPosition, testPosition);
+	}
+
+	@Test
+	public void testLocalPositionMatchesWorldPositionWithNoParent() throws Exception {
+		Vector3 testPosition = new Vector3(10.f, 1.f, 7.f);
+		Vector3 outLocalPosition = new Vector3();
+		Vector3 outWorldPosition = new Vector3();
+
+		Transform transform = new Transform();
+		transform.getLocalPosition(outLocalPosition);
+		transform.getWorldPosition(outWorldPosition);
+		Assert.assertEquals(outLocalPosition, outWorldPosition);
+
+		transform.setLocalPosition(testPosition);
+		transform.getLocalPosition(outLocalPosition);
+		transform.getWorldPosition(outWorldPosition);
+		Assert.assertEquals(outLocalPosition, outWorldPosition);
+	}
+
+	@Test
+	public void testGetWorldTransformHonorsTransformStack() throws Exception {
+		Vector3 testPosition = new Vector3(-6.f, 1.f, 7.f);
+		Vector3 outPosition = new Vector3();
+
+		Transform root = new Transform();
+		Transform child = new Transform();
+
+		child.setParent(root);
+
+		root.setLocalPosition(testPosition);
+		child.getWorldPosition(outPosition);
+		Assert.assertEquals(testPosition, outPosition);
+	}
+
 	public boolean approximatelyEqual(Matrix4 mat0, Matrix4 mat1, float epsilon) {
 		for(int i = 0; i < 16; i++) {
 			float diff = Math.abs(mat0.getValues()[i] - mat1.getValues()[i]);
