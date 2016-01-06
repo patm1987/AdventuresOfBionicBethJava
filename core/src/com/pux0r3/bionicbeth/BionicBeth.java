@@ -5,9 +5,9 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pux0r3.bionicbeth.physics.PhysicsComponent;
+import com.pux0r3.bionicbeth.physics.PhysicsSystem;
 import com.pux0r3.bionicbeth.rendering.ImageComponent;
 import com.pux0r3.bionicbeth.rendering.RenderingSystem;
 import com.pux0r3.bionicbeth.rendering.Transform;
@@ -17,6 +17,7 @@ public class BionicBeth extends ApplicationAdapter {
 
 	Engine _engine;
 	RenderingSystem _renderingSystem;
+	PhysicsSystem _physicsSystem;
 	
 	@Override
 	public void create () {
@@ -25,12 +26,16 @@ public class BionicBeth extends ApplicationAdapter {
 		_renderingSystem = new RenderingSystem(new Color(Color.BLUE));
 		_engine.addSystem(_renderingSystem);
 
+		_physicsSystem = new PhysicsSystem();
+		_engine.addSystem(_physicsSystem);
+
 		Texture bethImage = new Texture("Characters/Beth.png");
 
 		Transform bethTransform = new Transform();
 		Entity bethEntity = new Entity();
 		bethEntity.add(new ImageComponent(bethImage));
 		bethEntity.add(new TransformComponent(bethTransform));
+		bethEntity.add(new PhysicsComponent());
 		_engine.addEntity(bethEntity);
 	}
 

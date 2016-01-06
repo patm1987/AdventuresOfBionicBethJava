@@ -141,4 +141,8 @@ public class Transform {
 	public void getWorldPosition(Vector3 outPosition) {
 		getWorldTransform().getTranslation(outPosition);
 	}
+
+	public void setWorldPosition(Vector3 worldPosition) {
+		throw new RuntimeException("setWorldPosition not implemented!");
+	}
 }
