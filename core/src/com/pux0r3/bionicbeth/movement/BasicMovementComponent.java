@@ -14,6 +14,7 @@ public class BasicMovementComponent implements Component {
 	// TODO: acceleration (possibly with curve)
 	// TODO: implement jumping
 	// TODO: clear a jump flag when "on the ground"
+	// TODO: left and right might want to be 0-1 rather than true or false
 
 	public void setMoveLeft(boolean moveLeft) {
 		_moveLeft = moveLeft;
