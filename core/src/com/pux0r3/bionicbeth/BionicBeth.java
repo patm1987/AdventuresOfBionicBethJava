@@ -6,6 +6,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector3;
 import com.pux0r3.bionicbeth.physics.PhysicsComponent;
 import com.pux0r3.bionicbeth.physics.PhysicsSystem;
 import com.pux0r3.bionicbeth.rendering.ImageComponent;
@@ -35,7 +36,9 @@ public class BionicBeth extends ApplicationAdapter {
 		Entity bethEntity = new Entity();
 		bethEntity.add(new ImageComponent(bethImage));
 		bethEntity.add(new TransformComponent(bethTransform));
-		bethEntity.add(new PhysicsComponent());
+		PhysicsComponent physicsComponent = new PhysicsComponent();
+		physicsComponent.setVelocity(new Vector3(0.f, 10.f, 0.f));
+		bethEntity.add(physicsComponent);
 		_engine.addEntity(bethEntity);
 	}
 

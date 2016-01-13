@@ -355,6 +355,20 @@ public class TransformTest {
 		Assert.assertEquals(testPosition, outPosition);
 	}
 
+	@Test
+	public void testCanSetWorldPosition() throws Exception {
+		Transform root = new Transform();
+		root.setLocalPosition(new Vector3(1.f, 1.f, 1.f));
+		root.setLocalRotation(new Quaternion(new Vector3(1.f, 0.f, 0.f), 1.f));
+
+		Transform child = new Transform();
+		child.setWorldPosition(new Vector3(10.f, 1.f, 5.f));
+
+		Vector3 testWorldPosition = new Vector3();
+		child.getWorldPosition(testWorldPosition);
+		Assert.assertEquals(new Vector3(10.f, 1.f, 5.f), testWorldPosition);
+	}
+
 	public boolean approximatelyEqual(Matrix4 mat0, Matrix4 mat1, float epsilon) {
 		for(int i = 0; i < 16; i++) {
 			float diff = Math.abs(mat0.getValues()[i] - mat1.getValues()[i]);

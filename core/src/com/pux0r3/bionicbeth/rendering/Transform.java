@@ -52,7 +52,7 @@ public class Transform {
 	}
 
 	/*!
-	 * Gets the matrix that takes an object in world space into local space
+	 * Gets the matrix that takes an object in parent space into local space
 	 * \return the world to local transform represented by this matrix
 	 */
 	public Matrix4 getInverseTransform() {
@@ -143,6 +143,11 @@ public class Transform {
 	}
 
 	public void setWorldPosition(Vector3 worldPosition) {
-		throw new RuntimeException("setWorldPosition not implemented!");
+		// TODO: I can avoid a bit of overhead if I just factor in local rotation/scale
+		// rather than clearing everything
+		setLocalPosition(Vector3.Zero);
+		Matrix4 inverseWorldTransform = getInverseWorldTransform();
+		worldPosition.mul(inverseWorldTransform);
+		setLocalPosition(worldPosition);
 	}
 }
