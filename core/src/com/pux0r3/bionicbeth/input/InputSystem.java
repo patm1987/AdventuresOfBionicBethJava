@@ -31,10 +31,19 @@ public class InputSystem extends EntitySystem {
 			InputComponent inputComponent = _inputMapper.get(entity);
 			movementComponent.setMoveLeft(
 					_keyChecker.isKeyPressedInSet(
-							inputComponent.getInputMapping().LeftKeys));
+							inputComponent.getInputMapping().LeftKeys
+					)
+			);
 			movementComponent.setMoveRight(
 					_keyChecker.isKeyPressedInSet(
-							inputComponent.getInputMapping().RightKeys));
+							inputComponent.getInputMapping().RightKeys
+					)
+			);
+			movementComponent.setJump(
+					_keyChecker.isKeyPressedInSet(
+							inputComponent.getInputMapping().JumpKeys
+					)
+			);
 		}
 	}
 

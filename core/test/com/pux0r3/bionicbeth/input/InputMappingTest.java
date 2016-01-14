@@ -66,6 +66,24 @@ public class InputMappingTest {
 		assertEquals(true, _movementComponent.getMoveRight());
 	}
 
+	@Test
+	public void testJumpInputCausesJump() throws Exception {
+		final int[] expectedKeySet = new int[]{Input.Keys.UP};
+
+		IKeyChecker keyChecker = new FakeKeyChecker(expectedKeySet);
+
+		InputSystem inputSystem = new InputSystem(keyChecker);
+		_engine.addSystem(inputSystem);
+
+		InputSystem.InputMapping inputMapping = new InputSystem.InputMapping();
+		inputMapping.JumpKeys = expectedKeySet;
+		_inputComponent.setInputMapping(inputMapping);
+
+		_engine.update(1.f);
+
+		assertEquals(true, _movementComponent.getJump());
+	}
+
 	public class FakeKeyChecker implements IKeyChecker {
 		private final int[] _pressedKeys;
 
