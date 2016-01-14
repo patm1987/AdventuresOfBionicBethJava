@@ -9,12 +9,17 @@ public class BasicMovementComponent implements Component {
 	private boolean _moveLeft;
 	private boolean _moveRight;
 	private boolean _jump;
+	private float _speed;
 
 	// TODO: speed
 	// TODO: acceleration (possibly with curve)
 	// TODO: implement jumping
 	// TODO: clear a jump flag when "on the ground"
 	// TODO: left and right might want to be 0-1 rather than true or false
+
+	public BasicMovementComponent() {
+		_speed = 1.f;
+	}
 
 	public void setMoveLeft(boolean moveLeft) {
 		_moveLeft = moveLeft;
@@ -38,5 +43,13 @@ public class BasicMovementComponent implements Component {
 
 	public boolean getJump() {
 		return _jump;
+	}
+
+	public void setSpeed(float speed) {
+		this._speed = speed;
+	}
+
+	public float getSpeed() {
+		return _speed;
 	}
 }

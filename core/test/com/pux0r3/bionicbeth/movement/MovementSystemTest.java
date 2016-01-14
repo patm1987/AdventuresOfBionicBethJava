@@ -53,4 +53,28 @@ public class MovementSystemTest {
 		physicsComponent.getVelocity(velocity);
 		assertEquals(velocity.x, 1.f, Math.ulp(1.f));
 	}
+
+	@Test
+	public void testAppliesSpeedLeft() throws Exception {
+		float speed = 5.f;
+
+		Engine engine = new Engine();
+		MovementSystem movementSystem = new MovementSystem();
+		engine.addSystem(movementSystem);
+
+		Entity testEntity = new Entity();
+		PhysicsComponent physicsComponent = new PhysicsComponent();
+		BasicMovementComponent movementComponent = new BasicMovementComponent();
+		movementComponent.setSpeed(speed);
+		testEntity.add(physicsComponent);
+		testEntity.add(movementComponent);
+		engine.addEntity(testEntity);
+
+		movementComponent.setMoveLeft(true);
+		engine.update(1.f);
+
+		Vector3 velocity = new Vector3();
+		physicsComponent.getVelocity(velocity);
+		assertEquals(velocity.x, -5.f, Math.ulp(1.f));
+	}
 }
