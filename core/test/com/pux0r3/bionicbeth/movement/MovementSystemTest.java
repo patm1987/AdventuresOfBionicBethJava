@@ -77,4 +77,6 @@ public class MovementSystemTest {
 		_physicsComponent.getVelocity(velocity);
 		assertEquals(velocity.x, 5.f, Math.ulp(1.f));
 	}
+
+	// TODO: test active breaking when not pressing left/right
 }
