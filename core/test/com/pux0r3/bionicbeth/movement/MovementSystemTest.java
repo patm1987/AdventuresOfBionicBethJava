@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector3;
 import com.pux0r3.bionicbeth.physics.PhysicsComponent;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -12,45 +13,40 @@ import static org.junit.Assert.*;
  * Created by pux19 on 1/12/2016.
  */
 public class MovementSystemTest {
-	@Test
-	public void testLeftMovesLeft() throws Exception {
-		Engine engine = new Engine();
-		MovementSystem movementSystem = new MovementSystem();
-		engine.addSystem(movementSystem);
+	private Engine _engine;
+	private PhysicsComponent _physicsComponent;
+	private BasicMovementComponent _movementComponent;
+
+	@Before
+	public void setUp() throws Exception {
+		_engine = new Engine();
+		_engine.addSystem(new MovementSystem());
 
 		Entity testEntity = new Entity();
-		PhysicsComponent physicsComponent = new PhysicsComponent();
-		BasicMovementComponent movementComponent = new BasicMovementComponent();
-		testEntity.add(physicsComponent);
-		testEntity.add(movementComponent);
-		engine.addEntity(testEntity);
+		_physicsComponent = new PhysicsComponent();
+		testEntity.add(_physicsComponent);
+		_movementComponent = new BasicMovementComponent();
+		testEntity.add(_movementComponent);
+		_engine.addEntity(testEntity);
+	}
 
-		movementComponent.setMoveLeft(true);
-		engine.update(1.f);
+	@Test
+	public void testLeftMovesLeft() throws Exception {
+		_movementComponent.setMoveLeft(true);
+		_engine.update(1.f);
 
 		Vector3 velocity = new Vector3();
-		physicsComponent.getVelocity(velocity);
+		_physicsComponent.getVelocity(velocity);
 		assertEquals(velocity.x, -1.f, Math.ulp(1.f));
 	}
 
 	@Test
 	public void testLeftMovesRight() throws Exception {
-		Engine engine = new Engine();
-		MovementSystem movementSystem = new MovementSystem();
-		engine.addSystem(movementSystem);
-
-		Entity testEntity = new Entity();
-		PhysicsComponent physicsComponent = new PhysicsComponent();
-		BasicMovementComponent movementComponent = new BasicMovementComponent();
-		testEntity.add(physicsComponent);
-		testEntity.add(movementComponent);
-		engine.addEntity(testEntity);
-
-		movementComponent.setMoveRight(true);
-		engine.update(1.f);
+		_movementComponent.setMoveRight(true);
+		_engine.update(1.f);
 
 		Vector3 velocity = new Vector3();
-		physicsComponent.getVelocity(velocity);
+		_physicsComponent.getVelocity(velocity);
 		assertEquals(velocity.x, 1.f, Math.ulp(1.f));
 	}
 
@@ -58,23 +54,13 @@ public class MovementSystemTest {
 	public void testAppliesSpeedLeft() throws Exception {
 		float speed = 5.f;
 
-		Engine engine = new Engine();
-		MovementSystem movementSystem = new MovementSystem();
-		engine.addSystem(movementSystem);
+		_movementComponent.setSpeed(speed);
 
-		Entity testEntity = new Entity();
-		PhysicsComponent physicsComponent = new PhysicsComponent();
-		BasicMovementComponent movementComponent = new BasicMovementComponent();
-		movementComponent.setSpeed(speed);
-		testEntity.add(physicsComponent);
-		testEntity.add(movementComponent);
-		engine.addEntity(testEntity);
-
-		movementComponent.setMoveLeft(true);
-		engine.update(1.f);
+		_movementComponent.setMoveLeft(true);
+		_engine.update(1.f);
 
 		Vector3 velocity = new Vector3();
-		physicsComponent.getVelocity(velocity);
+		_physicsComponent.getVelocity(velocity);
 		assertEquals(velocity.x, -5.f, Math.ulp(1.f));
 	}
 }
