@@ -9,9 +9,6 @@ import com.pux0r3.bionicbeth.movement.BasicMovementComponent;
  */
 public class InputSystem extends EntitySystem {
 	// TODO: joystick input
-	// TODO: multiple input mappings (w and -> to right)
-	// TODO: custom key input mapping (w or -> to right)
-	// TODO: map input to movement
 
 	private ComponentMapper<BasicMovementComponent> _movementMapper;
 	private ComponentMapper<InputComponent> _inputMapper;
