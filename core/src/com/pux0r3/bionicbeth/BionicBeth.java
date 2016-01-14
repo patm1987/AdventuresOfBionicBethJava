@@ -47,7 +47,10 @@ public class BionicBeth extends ApplicationAdapter {
 		bethEntity.add(new ImageComponent(bethImage));
 		bethEntity.add(new TransformComponent(bethTransform));
 		bethEntity.add(new PhysicsComponent());
-		bethEntity.add(new BasicMovementComponent());
+
+		BasicMovementComponent movementComponent = new BasicMovementComponent();
+		movementComponent.setSpeed(20.f);
+		bethEntity.add(movementComponent);
 
 		InputSystem.InputMapping inputMapping = new InputSystem.InputMapping();
 		inputMapping.LeftKeys = new int[] {Input.Keys.LEFT, Input.Keys.A};
