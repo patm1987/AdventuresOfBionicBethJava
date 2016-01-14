@@ -30,7 +30,7 @@ public class MovementSystemTest {
 
 		Vector3 velocity = new Vector3();
 		physicsComponent.getVelocity(velocity);
-		assertEquals(velocity.x, 1.f, Math.ulp(1.f));
+		assertEquals(velocity.x, -1.f, Math.ulp(1.f));
 	}
 
 	@Test
@@ -51,6 +51,6 @@ public class MovementSystemTest {
 
 		Vector3 velocity = new Vector3();
 		physicsComponent.getVelocity(velocity);
-		assertEquals(velocity.x, -1.f, Math.ulp(1.f));
+		assertEquals(velocity.x, 1.f, Math.ulp(1.f));
 	}
 }

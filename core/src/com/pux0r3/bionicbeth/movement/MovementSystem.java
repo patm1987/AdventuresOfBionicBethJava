@@ -33,10 +33,10 @@ public class MovementSystem extends EntitySystem {
 			Vector3 velocity = new Vector3();
 			physicsComponent.getVelocity(velocity);
 			if (movementComponent.getMoveLeft()) {
-				velocity.x = 1.f;
+				velocity.x = -1.f;
 			}
 			else if (movementComponent.getMoveRight()) {
-				velocity.x = -1.f;
+				velocity.x = 1.f;
 			}
 
 			physicsComponent.setVelocity(velocity);
