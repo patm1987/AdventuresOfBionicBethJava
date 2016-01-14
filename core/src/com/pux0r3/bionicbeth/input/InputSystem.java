@@ -29,7 +29,12 @@ public class InputSystem extends EntitySystem {
 		for(Entity entity: _entityList) {
 			BasicMovementComponent movementComponent = _movementMapper.get(entity);
 			InputComponent inputComponent = _inputMapper.get(entity);
-			movementComponent.setMoveLeft(_keyChecker.isKeyPressedInSet(inputComponent.getInputMapping().LeftKeys));
+			movementComponent.setMoveLeft(
+					_keyChecker.isKeyPressedInSet(
+							inputComponent.getInputMapping().LeftKeys));
+			movementComponent.setMoveRight(
+					_keyChecker.isKeyPressedInSet(
+							inputComponent.getInputMapping().RightKeys));
 		}
 	}
 
