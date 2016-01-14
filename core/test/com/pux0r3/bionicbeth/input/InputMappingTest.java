@@ -3,7 +3,9 @@ package com.pux0r3.bionicbeth.input;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Input;
+import com.pux0r3.bionicbeth.input.InputSystem.IKeyChecker;
 import com.pux0r3.bionicbeth.movement.BasicMovementComponent;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,65 +14,78 @@ import static org.junit.Assert.assertEquals;
  * Created by pux19 on 1/13/2016.
  */
 public class InputMappingTest {
+	private Engine _engine;
+	private BasicMovementComponent _movementComponent;
+	private InputComponent _inputComponent;
+
+	@Before
+	public void setUp() throws Exception {
+		_engine = new Engine();
+
+		Entity testEntity = new Entity();
+		_movementComponent = new BasicMovementComponent();
+		_inputComponent = new InputComponent();
+		testEntity.add(_movementComponent);
+		testEntity.add(_inputComponent);
+		_engine.addEntity(testEntity);
+	}
+
 	@Test
 	public void testLeftInputCausesMovement() throws Exception {
 		final int[] expectedKeySet = new int[]{Input.Keys.LEFT};
-		InputSystem.IKeyChecker keyChecker = new InputSystem.IKeyChecker() {
 
-			@Override
-			public boolean isKeyPressedInSet(int[] keySet) {
-				return keySet == expectedKeySet;
-			}
-		};
+		IKeyChecker keyChecker = new FakeKeyChecker(expectedKeySet);
 
-		Engine engine = new Engine();
 		InputSystem inputSystem = new InputSystem(keyChecker);
-		engine.addSystem(inputSystem);
+		_engine.addSystem(inputSystem);
 
-		Entity testEntity = new Entity();
-		BasicMovementComponent movementComponent = new BasicMovementComponent();
-		InputComponent inputComponent = new InputComponent();
 		InputSystem.InputMapping inputMapping = new InputSystem.InputMapping();
 		inputMapping.LeftKeys = expectedKeySet;
-		inputComponent.setInputMapping(inputMapping);
-		testEntity.add(movementComponent);
-		testEntity.add(inputComponent);
+		_inputComponent.setInputMapping(inputMapping);
 
-		engine.addEntity(testEntity);
+		_engine.update(1.f);
 
-		engine.update(1.f);
-
-		assertEquals(true, movementComponent.getMoveLeft());
+		assertEquals(true, _movementComponent.getMoveLeft());
 	}
 
 	@Test
 	public void testRightInputCausesMovement() throws Exception {
 		final int[] expectedKeySet = new int[]{Input.Keys.RIGHT};
-		InputSystem.IKeyChecker keyChecker = new InputSystem.IKeyChecker() {
 
-			@Override
-			public boolean isKeyPressedInSet(int[] keySet) {
-				return keySet == expectedKeySet;
-			}
-		};
+		IKeyChecker keyChecker = new FakeKeyChecker(expectedKeySet);
 
-		Engine engine = new Engine();
 		InputSystem inputSystem = new InputSystem(keyChecker);
-		engine.addSystem(inputSystem);
+		_engine.addSystem(inputSystem);
 
-		Entity testEntity = new Entity();
-		BasicMovementComponent movementComponent = new BasicMovementComponent();
-		InputComponent inputComponent = new InputComponent();
 		InputSystem.InputMapping inputMapping = new InputSystem.InputMapping();
 		inputMapping.RightKeys = expectedKeySet;
-		inputComponent.setInputMapping(inputMapping);
-		testEntity.add(movementComponent);
-		testEntity.add(inputComponent);
+		_inputComponent.setInputMapping(inputMapping);
 
-		engine.addEntity(testEntity);
+		_engine.update(1.f);
 
-		engine.update(1.f);
+		assertEquals(true, _movementComponent.getMoveRight());
+	}
 
-		assertEquals(true, movementComponent.getMoveRight());
+	public class FakeKeyChecker implements IKeyChecker {
+		private final int[] _pressedKeys;
+
+		public FakeKeyChecker(int[] pressedKeys) {
+			_pressedKeys = pressedKeys;
+		}
+
+		@Override
+		public boolean isKeyPressedInSet(int[] keySet) {
+			if (_pressedKeys == null || keySet == null) {
+				return false;
+			}
+			for(int pressedKey: _pressedKeys) {
+				for (int key: keySet) {
+					if (pressedKey == key) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 	}
 }
