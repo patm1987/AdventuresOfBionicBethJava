@@ -2,12 +2,13 @@ package com.pux0r3.bionicbeth;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.signals.Signal;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector3;
+import com.pux0r3.bionicbeth.events.graphics.WindowResized;
 import com.pux0r3.bionicbeth.input.GdxKeyChecker;
 import com.pux0r3.bionicbeth.input.InputComponent;
 import com.pux0r3.bionicbeth.input.InputSystem;
@@ -19,19 +20,22 @@ import com.pux0r3.bionicbeth.rendering.ImageComponent;
 import com.pux0r3.bionicbeth.rendering.RenderingSystem;
 import com.pux0r3.bionicbeth.rendering.Transform;
 import com.pux0r3.bionicbeth.rendering.TransformComponent;
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap;
 
 public class BionicBeth extends ApplicationAdapter {
 
 	Engine _engine;
 	RenderingSystem _renderingSystem;
 	PhysicsSystem _physicsSystem;
-	
+
+	Signal<WindowResized> _windowResizedSignal;
+
 	@Override
 	public void create () {
+		_windowResizedSignal = new Signal<>();
+
 		_engine = new Engine();
 
-		_renderingSystem = new RenderingSystem(new Color(Color.BLUE));
+		_renderingSystem = new RenderingSystem(new Color(Color.BLUE), _windowResizedSignal);
 		_engine.addSystem(_renderingSystem);
 
 		_physicsSystem = new PhysicsSystem();
@@ -67,5 +71,12 @@ public class BionicBeth extends ApplicationAdapter {
 	public void render () {
 		float deltaTime = Gdx.graphics.getDeltaTime();
 		_engine.update(deltaTime);
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		super.resize(width, height);
+
+		_windowResizedSignal.dispatch(new WindowResized(width, height));
 	}
 }
