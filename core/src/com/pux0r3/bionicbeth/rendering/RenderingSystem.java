@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Affine2;
+import com.badlogic.gdx.math.Matrix4;
 import com.pux0r3.bionicbeth.events.graphics.WindowResized;
 
 /**
@@ -24,6 +25,7 @@ public class RenderingSystem extends EntitySystem {
 	private ComponentMapper<OrthographicCameraComponent> _orthographicCameraMapper;
 
 	SpriteBatch _spriteBatch;
+	private Entity _cameraEntity;
 
 	public RenderingSystem(Color backgroundColor, Signal<WindowResized> windowResizedSignal) {
 		super();
@@ -76,6 +78,14 @@ public class RenderingSystem extends EntitySystem {
 	}
 
 	private void handleWindowResized(WindowResized windowResized) {
-//		generateMatrix(windowResized.getWidth(), windowResized.getHeight());
+//		generateMatrix(windowResized.getWidth(), windowResized.getHalfHeight());
+	}
+
+	public void setCamera(Entity camera) {
+		this._cameraEntity = camera;
+	}
+
+	public void getProjectionMatrix(Matrix4 outProjectionMatrix) {
+		
 	}
 }
