@@ -26,6 +26,7 @@ public class RenderingSystem extends EntitySystem {
 
 	SpriteBatch _spriteBatch;
 	private Entity _cameraEntity;
+	private float _aspectRatio;
 
 	public RenderingSystem(
 			Color backgroundColor,
@@ -81,7 +82,7 @@ public class RenderingSystem extends EntitySystem {
 	}
 
 	private void handleWindowResized(WindowResized windowResized) {
-//		generateMatrix(windowResized.getWidth(), windowResized.getHalfHeight());
+		_aspectRatio = (float)windowResized.getWidth() / (float)windowResized.getHeight();
 	}
 
 	public void setCamera(Entity camera) {
@@ -89,6 +90,18 @@ public class RenderingSystem extends EntitySystem {
 	}
 
 	public void getProjectionMatrix(Matrix4 outProjectionMatrix) {
+		// TODO: I want to cache and regenerate this on demand
 
+		OrthographicCameraComponent orthographicCamera = _orthographicCameraMapper.get(_cameraEntity);
+		float height = 2.f * orthographicCamera.getHalfHeight();
+		float width = _aspectRatio * height;
+
+		outProjectionMatrix.setToOrtho(
+				-width * .5f,
+				width * .5f,
+				-height * .5f,
+				height * .5f,
+				orthographicCamera.getNear(),
+				orthographicCamera.getFar());
 	}
 }

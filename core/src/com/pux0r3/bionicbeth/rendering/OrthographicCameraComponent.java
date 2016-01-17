@@ -7,6 +7,8 @@ import com.badlogic.ashley.core.Component;
  */
 public class OrthographicCameraComponent implements Component {
 	private float _halfHeight;
+	private float _near;
+	private float _far;
 
 	public float getHalfHeight() {
 		return _halfHeight;
@@ -16,7 +18,19 @@ public class OrthographicCameraComponent implements Component {
 		_halfHeight = halfHeight;
 	}
 
-	public void updateSize(int width, int height) {
+	public float getNear() {
+		return _near;
+	}
 
+	public float getFar() {
+		return _far;
+	}
+
+	public void setNear(float near) {
+		_near = near;
+	}
+
+	public void setFar(float far) {
+		_far = far;
 	}
 }

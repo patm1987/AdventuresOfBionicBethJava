@@ -37,6 +37,8 @@ public class RenderingSystemTest {
 		Entity testEntity = new Entity();
 		OrthographicCameraComponent orthographicCameraComponent = new OrthographicCameraComponent();
 		orthographicCameraComponent.setHalfHeight(1.f);
+		orthographicCameraComponent.setNear(near);
+		orthographicCameraComponent.setFar(far);
 		testEntity.add(orthographicCameraComponent);
 		engine.addEntity(testEntity);
 
@@ -61,8 +63,11 @@ public class RenderingSystemTest {
 		Matrix4 generatedOrthographicProjectionMatrix = new Matrix4();
 		renderingSystem.getProjectionMatrix(generatedOrthographicProjectionMatrix);
 
-		// TODO: test for orthographic transform
-		assertEquals(expectedOrthographicProjectionMatrix, generatedOrthographicProjectionMatrix);
+		float[] expectedValues = expectedOrthographicProjectionMatrix.getValues();
+		float[] generatedValues = generatedOrthographicProjectionMatrix.getValues();
+		for (int i = 0; i < 16; i++) {
+			assertEquals(expectedValues[i], generatedValues[i], Math.ulp(1.f));
+		}
 	}
 
 	// TODO: make rendering system cranky if added entity doesn't have a camera
