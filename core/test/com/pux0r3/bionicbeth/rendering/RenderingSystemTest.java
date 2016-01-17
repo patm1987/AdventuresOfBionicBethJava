@@ -18,7 +18,9 @@ public class RenderingSystemTest {
 	public void testGeneratesOrthographicMatrix() throws Exception {
 		final float halfHeight = 1.f;
 		final float height = 2 * halfHeight;
-		final float aspect = 4.f / 3.f; // 4::3 aspect ratio
+		final int windowWidth = 640;
+		final int windowHeight = 480;
+		final float aspect = (float)windowWidth / (float)windowHeight;
 		final float width = height * aspect;
 		final float near = -1.f;
 		final float far = 1.f;
@@ -50,6 +52,10 @@ public class RenderingSystemTest {
 		// tell the rendering system what we're using to render
 		renderingSystem.setCamera(testEntity);
 
+		// best case for success is the resize signal firing now, future tests will have to push it back
+		// NOTE: should be 4::3, but doesn't really matter
+		windowResizedSignal.dispatch(new WindowResized(windowWidth, windowHeight));
+
 		// debating whether or not I should wait an update
 		// I figure that I should do lazy generation of the projection matrix, so it shouldn't be necessary
 		Matrix4 generatedOrthographicProjectionMatrix = new Matrix4();
@@ -61,4 +67,6 @@ public class RenderingSystemTest {
 
 	// TODO: make rendering system cranky if added entity doesn't have a camera
 	// TODO: if the camera has a position, check that the proper view transform is generated
+	// TODO: camera object changes after window size signal fires
+	// TODO: singal fires BEFORE the rendering system registers for the window size signal event
 }
