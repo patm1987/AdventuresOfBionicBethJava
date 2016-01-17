@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pux0r3.bionicbeth.events.graphics.WindowResized;
 import com.pux0r3.bionicbeth.input.GdxKeyChecker;
 import com.pux0r3.bionicbeth.input.InputComponent;
@@ -35,7 +36,10 @@ public class BionicBeth extends ApplicationAdapter {
 
 		_engine = new Engine();
 
-		_renderingSystem = new RenderingSystem(new Color(Color.BLUE), _windowResizedSignal);
+		_renderingSystem = new RenderingSystem(
+				new Color(Color.BLUE),
+				_windowResizedSignal,
+				new SpriteBatch());
 		_engine.addSystem(_renderingSystem);
 
 		_physicsSystem = new PhysicsSystem();

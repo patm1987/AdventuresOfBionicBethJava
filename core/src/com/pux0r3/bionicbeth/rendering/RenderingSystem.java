@@ -27,14 +27,17 @@ public class RenderingSystem extends EntitySystem {
 	SpriteBatch _spriteBatch;
 	private Entity _cameraEntity;
 
-	public RenderingSystem(Color backgroundColor, Signal<WindowResized> windowResizedSignal) {
+	public RenderingSystem(
+			Color backgroundColor,
+			Signal<WindowResized> windowResizedSignal,
+			SpriteBatch spriteBatch) {
 		super();
 
 		_backgroundColor = backgroundColor;
 		_transformMapper = ComponentMapper.getFor(TransformComponent.class);
 		_imageMapper = ComponentMapper.getFor(ImageComponent.class);
 		_orthographicCameraMapper = ComponentMapper.getFor(OrthographicCameraComponent.class);
-		_spriteBatch = new SpriteBatch();
+		_spriteBatch = spriteBatch;
 
 		windowResizedSignal.add(new Listener<WindowResized>() {
 			@Override
@@ -86,6 +89,6 @@ public class RenderingSystem extends EntitySystem {
 	}
 
 	public void getProjectionMatrix(Matrix4 outProjectionMatrix) {
-		
+
 	}
 }

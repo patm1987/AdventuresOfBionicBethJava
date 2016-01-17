@@ -30,7 +30,7 @@ public class RenderingSystemTest {
 
 		// engine with a rendering subsystem
 		Engine engine = new Engine();
-		RenderingSystem renderingSystem = new RenderingSystem(Color.BLACK, windowResizedSignal);
+		RenderingSystem renderingSystem = new RenderingSystem(Color.BLACK, windowResizedSignal, null);
 		engine.addSystem(renderingSystem);
 
 		// entity with an orthographic camera
