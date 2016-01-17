@@ -29,9 +29,7 @@ public class RenderingSystemTest {
 		Signal<WindowResized> windowResizedSignal = new Signal<>();
 
 		// engine with a rendering subsystem
-		Engine engine = new Engine();
 		RenderingSystem renderingSystem = new RenderingSystem(Color.BLACK, windowResizedSignal, null);
-		engine.addSystem(renderingSystem);
 
 		// entity with an orthographic camera
 		Entity testEntity = new Entity();
@@ -40,7 +38,6 @@ public class RenderingSystemTest {
 		orthographicCameraComponent.setNear(near);
 		orthographicCameraComponent.setFar(far);
 		testEntity.add(orthographicCameraComponent);
-		engine.addEntity(testEntity);
 
 		// expected orthographic transform
 		// NOTE: column major
