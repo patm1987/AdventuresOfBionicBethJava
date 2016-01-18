@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.pux0r3.bionicbeth.events.graphics.WindowResized;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -15,6 +16,18 @@ import static org.junit.Assert.assertEquals;
  * Created by pux19 on 1/16/2016.
  */
 public class RenderingSystemTest {
+	Signal<WindowResized> _windowResizedSignal;
+	private RenderingSystem _renderingSystem;
+
+	@Before
+	public void setUp() throws Exception {
+		// signal for alerting listeners that the window resized
+		_windowResizedSignal = new Signal<>();
+
+		// engine with a rendering subsystem
+		_renderingSystem = new RenderingSystem(Color.BLACK, _windowResizedSignal, null);
+	}
+
 	@Test
 	public void testGeneratesOrthographicMatrix() throws Exception {
 		final float halfHeight = 1.f;
@@ -25,12 +38,6 @@ public class RenderingSystemTest {
 		final float width = height * aspect;
 		final float near = -1.f;
 		final float far = 1.f;
-
-		// signal for alerting listeners that the window resized
-		Signal<WindowResized> windowResizedSignal = new Signal<>();
-
-		// engine with a rendering subsystem
-		RenderingSystem renderingSystem = new RenderingSystem(Color.BLACK, windowResizedSignal, null);
 
 		// entity with an orthographic camera
 		Entity testEntity = new Entity();
@@ -50,29 +57,25 @@ public class RenderingSystemTest {
 		});
 
 		// tell the rendering system what we're using to render
-		renderingSystem.setCamera(testEntity);
+		_renderingSystem.setCamera(testEntity);
 
 		// best case for success is the resize signal firing now, future tests will have to push it back
 		// NOTE: should be 4::3, but doesn't really matter
-		windowResizedSignal.dispatch(new WindowResized(windowWidth, windowHeight));
+		_windowResizedSignal.dispatch(new WindowResized(windowWidth, windowHeight));
 
 		// debating whether or not I should wait an update
 		// I figure that I should do lazy generation of the projection matrix, so it shouldn't be necessary
 		Matrix4 generatedOrthographicProjectionMatrix = new Matrix4();
-		renderingSystem.getProjectionMatrix(generatedOrthographicProjectionMatrix);
+		_renderingSystem.getProjectionMatrix(generatedOrthographicProjectionMatrix);
 
-		float[] expectedValues = expectedOrthographicProjectionMatrix.getValues();
-		float[] generatedValues = generatedOrthographicProjectionMatrix.getValues();
-		for (int i = 0; i < 16; i++) {
-			assertEquals(expectedValues[i], generatedValues[i], Math.ulp(1.f));
-		}
+		assertMatricesEqual(
+				expectedOrthographicProjectionMatrix,
+				generatedOrthographicProjectionMatrix,
+				Math.ulp(1.f));
 	}
 
 	@Test
 	public void testGetsViewMatrixFromTransform() throws Exception {
-		Signal<WindowResized> windowResized = new Signal<>();
-		RenderingSystem renderingSystem = new RenderingSystem(Color.BLACK, windowResized, null);
-
 		Transform transform = new Transform();
 		transform.setLocalPosition(new Vector3(1.f, 2.f, 3.f));
 		transform.setLocalRotation(new Quaternion(new Vector3(0.f, 1.f, 0.f), 2.f));
@@ -81,30 +84,23 @@ public class RenderingSystemTest {
 		testEntity.add(new OrthographicCameraComponent());
 		testEntity.add(new TransformComponent(transform));
 
-		renderingSystem.setCamera(testEntity);
+		_renderingSystem.setCamera(testEntity);
 
 		Matrix4 expectedViewMatrix = new Matrix4();
 		transform.getInverseWorldTransform(expectedViewMatrix);
 
 		Matrix4 generatedViewMatrix = new Matrix4();
-		renderingSystem.getViewMatrix(generatedViewMatrix);
+		_renderingSystem.getViewMatrix(generatedViewMatrix);
 
-		float[] expectedValues = expectedViewMatrix.getValues();
-		float[] generatedValues = generatedViewMatrix.getValues();
-		for (int i = 0; i < 16; i++) {
-			assertEquals(expectedValues[i], generatedValues[i], Math.ulp(10.f));
-		}
+		assertMatricesEqual(expectedViewMatrix, generatedViewMatrix, Math.ulp(10.f));
 	}
 
 	@Test
 	public void testViewUsesOriginIfNoTransformSpecifiedOnCamera() throws Exception {
-		Signal<WindowResized> windowResizedSignal = new Signal<>();
-		RenderingSystem renderingSystem = new RenderingSystem(Color.BLACK, windowResizedSignal, null);
-
 		Entity testEntity = new Entity();
 		testEntity.add(new OrthographicCameraComponent());
 
-		renderingSystem.setCamera(testEntity);
+		_renderingSystem.setCamera(testEntity);
 
 		Matrix4 expectedViewMatrix = new Matrix4(new float[]{
 				1.f, 0.f, 0.f, 0.f,
@@ -112,18 +108,23 @@ public class RenderingSystemTest {
 				0.f, 0.f, 1.f, 0.f,
 				0.f, 0.f, 0.f, 1.f
 		});
-		float[] expectedValues = expectedViewMatrix.getValues();
 
 		Matrix4 generatedMatrix = new Matrix4();
-		renderingSystem.getViewMatrix(generatedMatrix);
-		float[] generatedValues = generatedMatrix.getValues();
+		_renderingSystem.getViewMatrix(generatedMatrix);
 
-		for (int i = 0; i < 16; i++) {
-			assertEquals(expectedValues[i], generatedValues[i], Math.ulp(1.f));
-		}
+		assertMatricesEqual(expectedViewMatrix, generatedMatrix, Math.ulp(10.f));
 	}
 
 	// TODO: make rendering system cranky if added entity doesn't have a camera
 	// TODO: camera object changes after window size signal fires
 	// TODO: singal fires BEFORE the rendering system registers for the window size signal event
+
+	public static void assertMatricesEqual(Matrix4 expected, Matrix4 generated, float epsilon) {
+		float[] expectedValues = expected.getValues();
+		float[] generatedValues = generated.getValues();
+
+		for (int i = 0; i < 16; i++) {
+			assertEquals(expectedValues[i], generatedValues[i], epsilon);
+		}
+	}
 }
