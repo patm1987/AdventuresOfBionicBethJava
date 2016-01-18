@@ -64,6 +64,15 @@ public class RenderingSystem extends EntitySystem {
 				_backgroundColor.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		// TODO: lazily perform this action
+		Matrix4 viewMatrix = new Matrix4();
+		getViewMatrix(viewMatrix);
+		_spriteBatch.setTransformMatrix(viewMatrix);
+
+		Matrix4 projectionMatrix = new Matrix4();
+		getProjectionMatrix(projectionMatrix);
+		_spriteBatch.setProjectionMatrix(projectionMatrix);
+
 		_spriteBatch.begin();
 		for (Entity entity: _entityList) {
 			TransformComponent transform = _transformMapper.get(entity);

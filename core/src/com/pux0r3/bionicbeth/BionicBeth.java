@@ -17,10 +17,7 @@ import com.pux0r3.bionicbeth.movement.BasicMovementComponent;
 import com.pux0r3.bionicbeth.movement.MovementSystem;
 import com.pux0r3.bionicbeth.physics.PhysicsComponent;
 import com.pux0r3.bionicbeth.physics.PhysicsSystem;
-import com.pux0r3.bionicbeth.rendering.ImageComponent;
-import com.pux0r3.bionicbeth.rendering.RenderingSystem;
-import com.pux0r3.bionicbeth.rendering.Transform;
-import com.pux0r3.bionicbeth.rendering.TransformComponent;
+import com.pux0r3.bionicbeth.rendering.*;
 
 public class BionicBeth extends ApplicationAdapter {
 
@@ -50,6 +47,7 @@ public class BionicBeth extends ApplicationAdapter {
 
 		Texture bethImage = new Texture("Characters/Beth.png");
 
+		// TODO: need a scenegraph
 		Transform bethTransform = new Transform();
 		Entity bethEntity = new Entity();
 		bethEntity.add(new ImageComponent(bethImage));
@@ -69,6 +67,17 @@ public class BionicBeth extends ApplicationAdapter {
 		bethEntity.add(inputComponent);
 
 		_engine.addEntity(bethEntity);
+
+		Transform cameraTransform = new Transform();
+		OrthographicCameraComponent cameraComponent = new OrthographicCameraComponent();
+		cameraComponent.setNear(-10.f);
+		cameraComponent.setFar(10.f);
+		cameraComponent.setHalfHeight(320.f);
+		Entity cameraEntity = new Entity();
+		cameraEntity.add(new TransformComponent(cameraTransform));
+		cameraEntity.add(cameraComponent);
+		_engine.addEntity(cameraEntity);
+		_renderingSystem.setCamera(cameraEntity);
 	}
 
 	@Override
