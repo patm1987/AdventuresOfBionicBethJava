@@ -55,14 +55,15 @@ public class Transform {
 	 * Gets the matrix that takes an object in parent space into local space
 	 * \return the world to local transform represented by this matrix
 	 */
-	public Matrix4 getInverseTransform() {
+	public void getInverseTransform(Matrix4 outInverseTransform) {
 		if (_inverseLocalTransform == null) {
 			_inverseLocalTransform = new Matrix4(
 					new Vector3(-_position.x, -_position.y, -_position.z),
 					_rotation.cpy().conjugate(),
 					new Vector3(1f, 1f, 1f));
 		}
-		return _inverseLocalTransform;
+
+		outInverseTransform.set(_inverseLocalTransform);
 	}
 
 	/*!
@@ -82,16 +83,20 @@ public class Transform {
 		return _worldTransform;
 	}
 
-	public Matrix4 getInverseWorldTransform() {
+	public void getInverseWorldTransform(Matrix4 outInverseWorldTransform) {
 		if (_inverseWorldTransform == null) {
+			_inverseWorldTransform = new Matrix4();
 			if (_parent == null) {
-				_inverseWorldTransform = getInverseTransform().cpy();
+				getInverseTransform(_inverseWorldTransform);
 			} else {
-				_inverseWorldTransform = getInverseTransform().cpy();
-				_inverseWorldTransform.mul(_parent.getInverseWorldTransform());
+				getInverseTransform(_inverseWorldTransform);
+				Matrix4 parentInverseWorldTransform = new Matrix4();
+				_parent.getInverseWorldTransform(parentInverseWorldTransform);
+				_inverseWorldTransform.mul(parentInverseWorldTransform);
 			}
 		}
-		return _inverseWorldTransform;
+
+		outInverseWorldTransform.set(_inverseWorldTransform);
 	}
 
 	public void setLocalPosition(Vector3 localPosition) {
@@ -146,7 +151,8 @@ public class Transform {
 		// TODO: I can avoid a bit of overhead if I just factor in local rotation/scale
 		// rather than clearing everything
 		setLocalPosition(Vector3.Zero);
-		Matrix4 inverseWorldTransform = getInverseWorldTransform();
+		Matrix4 inverseWorldTransform = new Matrix4();
+		getInverseWorldTransform(inverseWorldTransform);
 		worldPosition.mul(inverseWorldTransform);
 		setLocalPosition(worldPosition);
 	}

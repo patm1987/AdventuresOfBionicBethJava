@@ -104,4 +104,14 @@ public class RenderingSystem extends EntitySystem {
 				orthographicCamera.getNear(),
 				orthographicCamera.getFar());
 	}
+
+	public void getViewMatrix(Matrix4 outGeneratedMatrix) {
+		TransformComponent transformComponent = _transformMapper.get(_cameraEntity);
+		if (transformComponent != null) {
+			transformComponent.getTransform().getInverseWorldTransform(outGeneratedMatrix);
+		}
+		else {
+			outGeneratedMatrix.set(new Matrix4());
+		}
+	}
 }

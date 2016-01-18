@@ -115,7 +115,9 @@ public class TransformTest {
 		t.setLocalPosition(position);
 
 		Vector3 storedInversePosition = new Vector3();
-		t.getInverseTransform().getTranslation(storedInversePosition);
+		Matrix4 inverseTransform = new Matrix4();
+		t.getInverseTransform(inverseTransform);
+		inverseTransform.getTranslation(storedInversePosition);
 		Assert.assertEquals(inversePosition, storedInversePosition);
 	}
 
@@ -133,7 +135,9 @@ public class TransformTest {
 		child.setLocalPosition(childPosition);
 
 		Vector3 storedInverseWorldPosition = new Vector3();
-		child.getInverseWorldTransform().getTranslation(storedInverseWorldPosition);
+		Matrix4 inverseWorldTransform = new Matrix4();
+		child.getInverseWorldTransform(inverseWorldTransform);
+		inverseWorldTransform.getTranslation(storedInverseWorldPosition);
 		Assert.assertEquals(inversePosition, storedInverseWorldPosition);
 	}
 
@@ -172,7 +176,9 @@ public class TransformTest {
 		t.setLocalRotation(quat);
 
 		Quaternion stored = new Quaternion();
-		t.getInverseTransform().getRotation(stored);
+		Matrix4 inverseTransform = new Matrix4();
+		t.getInverseTransform(inverseTransform);
+		inverseTransform.getRotation(stored);
 
 		Assert.assertTrue(MathUtils.EqualsEpsilon(inv, stored, kEpsilon));
 	}
@@ -237,13 +243,18 @@ public class TransformTest {
 		Matrix4 expectedInvNewWorld = childInvTransform.cpy().mul(parentInvNewTransform);
 
 		Assert.assertTrue(approximatelyEqual(expectedWorld, child.getWorldTransform(), kEpsilon));
-		Assert.assertTrue(approximatelyEqual(expectedInvWorld, child.getInverseWorldTransform(), kEpsilon));
+
+		Matrix4 inverseWorldTransform = new Matrix4();
+		child.getInverseWorldTransform(inverseWorldTransform);
+		Assert.assertTrue(approximatelyEqual(expectedInvWorld, inverseWorldTransform, kEpsilon));
 
 		parent.setLocalPosition(parentNewPosition);
 		parent.setLocalRotation(parentNewQuaternion);
 
 		Assert.assertTrue(approximatelyEqual(expectedNewWorld, child.getWorldTransform(), kEpsilon));
-		Assert.assertTrue(approximatelyEqual(expectedInvNewWorld, child.getInverseWorldTransform(), kEpsilon));
+
+		child.getInverseWorldTransform(inverseWorldTransform);
+		Assert.assertTrue(approximatelyEqual(expectedInvNewWorld, inverseWorldTransform, kEpsilon));
 	}
 
 	@Test

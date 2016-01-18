@@ -1,14 +1,15 @@
 package com.pux0r3.bionicbeth.rendering;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
 import com.pux0r3.bionicbeth.events.graphics.WindowResized;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by pux19 on 1/16/2016.
@@ -67,8 +68,62 @@ public class RenderingSystemTest {
 		}
 	}
 
+	@Test
+	public void testGetsViewMatrixFromTransform() throws Exception {
+		Signal<WindowResized> windowResized = new Signal<>();
+		RenderingSystem renderingSystem = new RenderingSystem(Color.BLACK, windowResized, null);
+
+		Transform transform = new Transform();
+		transform.setLocalPosition(new Vector3(1.f, 2.f, 3.f));
+		transform.setLocalRotation(new Quaternion(new Vector3(0.f, 1.f, 0.f), 2.f));
+
+		Entity testEntity = new Entity();
+		testEntity.add(new OrthographicCameraComponent());
+		testEntity.add(new TransformComponent(transform));
+
+		renderingSystem.setCamera(testEntity);
+
+		Matrix4 expectedViewMatrix = new Matrix4();
+		transform.getInverseWorldTransform(expectedViewMatrix);
+
+		Matrix4 generatedViewMatrix = new Matrix4();
+		renderingSystem.getViewMatrix(generatedViewMatrix);
+
+		float[] expectedValues = expectedViewMatrix.getValues();
+		float[] generatedValues = generatedViewMatrix.getValues();
+		for (int i = 0; i < 16; i++) {
+			assertEquals(expectedValues[i], generatedValues[i], Math.ulp(10.f));
+		}
+	}
+
+	@Test
+	public void testViewUsesOriginIfNoTransformSpecifiedOnCamera() throws Exception {
+		Signal<WindowResized> windowResizedSignal = new Signal<>();
+		RenderingSystem renderingSystem = new RenderingSystem(Color.BLACK, windowResizedSignal, null);
+
+		Entity testEntity = new Entity();
+		testEntity.add(new OrthographicCameraComponent());
+
+		renderingSystem.setCamera(testEntity);
+
+		Matrix4 expectedViewMatrix = new Matrix4(new float[]{
+				1.f, 0.f, 0.f, 0.f,
+				0.f, 1.f, 0.f, 0.f,
+				0.f, 0.f, 1.f, 0.f,
+				0.f, 0.f, 0.f, 1.f
+		});
+		float[] expectedValues = expectedViewMatrix.getValues();
+
+		Matrix4 generatedMatrix = new Matrix4();
+		renderingSystem.getViewMatrix(generatedMatrix);
+		float[] generatedValues = generatedMatrix.getValues();
+
+		for (int i = 0; i < 16; i++) {
+			assertEquals(expectedValues[i], generatedValues[i], Math.ulp(1.f));
+		}
+	}
+
 	// TODO: make rendering system cranky if added entity doesn't have a camera
-	// TODO: if the camera has a position, check that the proper view transform is generated
 	// TODO: camera object changes after window size signal fires
 	// TODO: singal fires BEFORE the rendering system registers for the window size signal event
 }
