@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.pux0r3.bionicbeth.events.graphics.WindowResized;
 import com.pux0r3.bionicbeth.input.GdxKeyChecker;
 import com.pux0r3.bionicbeth.input.InputComponent;
@@ -78,6 +79,13 @@ public class BionicBeth extends ApplicationAdapter {
 		cameraEntity.add(cameraComponent);
 		_engine.addEntity(cameraEntity);
 		_renderingSystem.setCamera(cameraEntity);
+
+		Transform boxTransform = new Transform();
+		boxTransform.setLocalPosition(new Vector3(0.f, -10.f, 0.f));
+		Entity boxEntity = new Entity();
+		boxEntity.add(new TransformComponent(boxTransform));
+		boxEntity.add(_renderingSystem.makeBox(10.f));
+		_engine.addEntity(boxEntity);
 	}
 
 	@Override

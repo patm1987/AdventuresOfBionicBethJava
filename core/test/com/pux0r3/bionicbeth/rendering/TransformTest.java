@@ -71,7 +71,9 @@ public class TransformTest {
 	@Test
 	public void testMatrixCreatedWithIdentity() throws Exception {
 		Transform t = new Transform();
-		Assert.assertArrayEquals(t.getLocalTransform().val, new Matrix4().val, kEpsilon);
+		Matrix4 localTransform = new Matrix4();
+		t.getLocalTransform(localTransform);
+		Assert.assertArrayEquals(localTransform.val, new Matrix4().val, kEpsilon);
 	}
 
 	@Test
@@ -82,7 +84,9 @@ public class TransformTest {
 		t.setLocalPosition(localPosition);
 
 		Vector3 storedTransform = new Vector3();
-		t.getLocalTransform().getTranslation(storedTransform);
+		Matrix4 localTransform = new Matrix4();
+		t.getLocalTransform(localTransform);
+		localTransform.getTranslation(storedTransform);
 
 		Assert.assertEquals(localPosition, storedTransform);
 	}
@@ -102,7 +106,9 @@ public class TransformTest {
 		child.setParent(parent);
 
 		Vector3 storedWorldPosition = new Vector3();
-		child.getWorldTransform().getTranslation(storedWorldPosition);
+		Matrix4 worldTransform = new Matrix4();
+		child.getWorldTransform(worldTransform);
+		worldTransform.getTranslation(storedWorldPosition);
 
 		Assert.assertEquals(worldPosition, storedWorldPosition);
 	}
@@ -147,7 +153,9 @@ public class TransformTest {
 		Transform t = new Transform();
 
 		Quaternion stored = new Quaternion();
-		t.getLocalTransform().getRotation(stored);
+		Matrix4 localTransform = new Matrix4();
+		t.getLocalTransform(localTransform);
+		localTransform.getRotation(stored);
 
 		Assert.assertEquals(expected, stored);
 	}
@@ -159,7 +167,9 @@ public class TransformTest {
 		t.setLocalRotation(expected);
 
 		Quaternion stored = new Quaternion();
-		t.getLocalTransform().getRotation(stored);
+		Matrix4 localTransform = new Matrix4();
+		t.getLocalTransform(localTransform);
+		localTransform.getRotation(stored);
 
 		// equals with an epsilon
 		Assert.assertTrue(MathUtils.EqualsEpsilon(expected, stored, kEpsilon));
@@ -242,7 +252,9 @@ public class TransformTest {
 		Matrix4 expectedInvWorld = childInvTransform.cpy().mul(parentInvTransform);
 		Matrix4 expectedInvNewWorld = childInvTransform.cpy().mul(parentInvNewTransform);
 
-		Assert.assertTrue(approximatelyEqual(expectedWorld, child.getWorldTransform(), kEpsilon));
+		Matrix4 childWorldTransform = new Matrix4();
+		child.getWorldTransform(childWorldTransform);
+		Assert.assertTrue(approximatelyEqual(expectedWorld, childWorldTransform, kEpsilon));
 
 		Matrix4 inverseWorldTransform = new Matrix4();
 		child.getInverseWorldTransform(inverseWorldTransform);
@@ -251,7 +263,8 @@ public class TransformTest {
 		parent.setLocalPosition(parentNewPosition);
 		parent.setLocalRotation(parentNewQuaternion);
 
-		Assert.assertTrue(approximatelyEqual(expectedNewWorld, child.getWorldTransform(), kEpsilon));
+		child.getWorldTransform(childWorldTransform);
+		Assert.assertTrue(approximatelyEqual(expectedNewWorld, childWorldTransform, kEpsilon));
 
 		child.getInverseWorldTransform(inverseWorldTransform);
 		Assert.assertTrue(approximatelyEqual(expectedInvNewWorld, inverseWorldTransform, kEpsilon));
@@ -310,14 +323,18 @@ public class TransformTest {
 				new Vector3(1f, 1f, 1f));
 		transformStack2.mul(transformAndChild);
 
+		Matrix4 childWorldTransform = new Matrix4();
+
 		childTransform.setParent(transformTransform);
 		transformTransform.setParent(parent1Transform);
+		childTransform.getWorldTransform(childWorldTransform);
 		Assert.assertTrue(
-				approximatelyEqual(transformStack1, childTransform.getWorldTransform(), kEpsilon));
+				approximatelyEqual(transformStack1, childWorldTransform, kEpsilon));
 
 		transformTransform.setParent(parent2Transform);
+		childTransform.getWorldTransform(childWorldTransform);
 		Assert.assertTrue(
-				approximatelyEqual(transformStack2, childTransform.getWorldTransform(), kEpsilon));
+				approximatelyEqual(transformStack2, childWorldTransform, kEpsilon));
 	}
 
 	@Test

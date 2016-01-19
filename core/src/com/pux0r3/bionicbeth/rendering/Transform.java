@@ -44,11 +44,12 @@ public class Transform {
 		return _children;
 	}
 
-	public Matrix4 getLocalTransform() {
+	public void getLocalTransform(Matrix4 outLocalTransform) {
 		if (_localTransform == null) {
 			_localTransform = new Matrix4(_position, _rotation, new Vector3(1f, 1f, 1f));
 		}
-		return _localTransform;
+
+		outLocalTransform.set(_localTransform);
 	}
 
 	/*!
@@ -70,17 +71,20 @@ public class Transform {
 	 * Gets the matrix that represents an object in world space
 	 * \return	the local to world transform represented by this matrix
 	 */
-	public Matrix4 getWorldTransform() {
+	public void getWorldTransform(Matrix4 outWorldTransform) {
 		if (_worldTransform == null) {
+			_worldTransform = new Matrix4();
 			if (_parent == null) {
-				_worldTransform = getLocalTransform().cpy();
+				getLocalTransform(_worldTransform);
 			} else {
-				_worldTransform = _parent.getWorldTransform().cpy();
-				_worldTransform.mul(getLocalTransform());
+				_parent.getWorldTransform(_worldTransform);
+				Matrix4 localTransform = new Matrix4();
+				getLocalTransform(localTransform);
+				_worldTransform.mul(localTransform);
 			}
 		}
 
-		return _worldTransform;
+		outWorldTransform.set(_worldTransform);
 	}
 
 	public void getInverseWorldTransform(Matrix4 outInverseWorldTransform) {
@@ -144,7 +148,9 @@ public class Transform {
 	}
 
 	public void getWorldPosition(Vector3 outPosition) {
-		getWorldTransform().getTranslation(outPosition);
+		Matrix4 worldTransform = new Matrix4();
+		getWorldTransform(worldTransform);
+		worldTransform.getTranslation(outPosition);
 	}
 
 	public void setWorldPosition(Vector3 worldPosition) {

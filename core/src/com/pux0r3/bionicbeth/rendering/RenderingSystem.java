@@ -5,9 +5,9 @@ import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Matrix4;
 import com.pux0r3.bionicbeth.events.graphics.WindowResized;
@@ -17,11 +17,12 @@ import com.pux0r3.bionicbeth.events.graphics.WindowResized;
  */
 public class RenderingSystem extends EntitySystem {
 	private final Color _backgroundColor;
-	private ImmutableArray<Entity> _entityList;
+	private ImmutableArray<Entity> _spriteEntityList;
+	private ImmutableArray<Entity> _meshEntityList;
 
 	private ComponentMapper<TransformComponent> _transformMapper;
 	private ComponentMapper<ImageComponent> _imageMapper;
-
+	private ComponentMapper<MeshComponent> _meshComponentMapper;
 	private ComponentMapper<OrthographicCameraComponent> _orthographicCameraMapper;
 
 	SpriteBatch _spriteBatch;
@@ -37,6 +38,7 @@ public class RenderingSystem extends EntitySystem {
 		_backgroundColor = backgroundColor;
 		_transformMapper = ComponentMapper.getFor(TransformComponent.class);
 		_imageMapper = ComponentMapper.getFor(ImageComponent.class);
+		_meshComponentMapper = ComponentMapper.getFor(MeshComponent.class);
 		_orthographicCameraMapper = ComponentMapper.getFor(OrthographicCameraComponent.class);
 		_spriteBatch = spriteBatch;
 
@@ -50,8 +52,11 @@ public class RenderingSystem extends EntitySystem {
 
 	@Override
 	public void addedToEngine(Engine engine) {
-		_entityList = engine.getEntitiesFor(
+		_spriteEntityList = engine.getEntitiesFor(
 				Family.all(TransformComponent.class, ImageComponent.class).get()
+		);
+		_meshEntityList = engine.getEntitiesFor(
+				Family.all(TransformComponent.class, MeshComponent.class).get()
 		);
 	}
 
@@ -73,14 +78,41 @@ public class RenderingSystem extends EntitySystem {
 		getProjectionMatrix(projectionMatrix);
 		_spriteBatch.setProjectionMatrix(projectionMatrix);
 
+		for(Entity entity: _meshEntityList) {
+			// TODO: sort by shader and render in big blocks!
+			TransformComponent transform = _transformMapper.get(entity);
+			MeshComponent meshComponent = _meshComponentMapper.get(entity);
+			Matrix4 modelView = new Matrix4();
+			transform.getTransform().getWorldTransform(modelView);
+			modelView.mulLeft(viewMatrix);
+
+			meshComponent.Shader.begin();
+			meshComponent.Shader.setUniformMatrix("modelView", modelView);
+			meshComponent.Shader.setUniformMatrix("projection", projectionMatrix);
+			meshComponent.Shader.setUniform4fv(
+					"color",
+					new float[]{
+							meshComponent.Color.r,
+							meshComponent.Color.g,
+							meshComponent.Color.b,
+							meshComponent.Color.a
+					},
+					0,
+					4);
+			meshComponent.Mesh.render(meshComponent.Shader, GL20.GL_TRIANGLES);
+			meshComponent.Shader.end();
+		}
+
 		_spriteBatch.begin();
-		for (Entity entity: _entityList) {
+		for (Entity entity: _spriteEntityList) {
 			TransformComponent transform = _transformMapper.get(entity);
 			ImageComponent image = _imageMapper.get(entity);
 
 			// TODO: I'm inefficient
 			Affine2 affineTransform = new Affine2();
-			affineTransform.set(transform.getTransform().getWorldTransform());
+			Matrix4 worldTransform = new Matrix4();
+			transform.getTransform().getWorldTransform(worldTransform);
+			affineTransform.set(worldTransform);
 			_spriteBatch.draw(
 					image.getTextureRegion(),
 					image.getWidth(),
@@ -122,5 +154,66 @@ public class RenderingSystem extends EntitySystem {
 		else {
 			outGeneratedMatrix.set(new Matrix4());
 		}
+	}
+
+	public MeshComponent makeBox(float radius) {
+		ShaderProgram shader = new ShaderProgram(
+				Gdx.files.internal("shaders/basic.vert"),
+				Gdx.files.internal("shaders/basic.frag"));
+		float[] vertexData = new float[] {
+				// top
+				-1.f, 1.f, -1.f, // 0
+				1.f, 1.f, -1.f, // 1
+				1.f, 1.f, 1.f, // 2
+				-1.f, 1.f, 1.f, // 3
+
+				// bottom
+				-1.f, -1.f, -1.f, // 4
+				1.f, -1.f, -1.f, // 5
+				1.f, -1.f, 1.f, // 6
+				-1.f, -1.f, 1.f // 7
+		};
+		for (int i = 0; i < vertexData.length; i++) {
+			vertexData[i] *= radius;
+		}
+		short[] indexData = new short[] {
+				// front
+				0, 4, 1,
+				1, 4, 5,
+
+				// right
+				1, 5, 2,
+				2, 5, 6,
+
+				// back
+				2, 6, 3,
+				3, 6, 7,
+
+				// left
+				3, 7, 0,
+				0, 7, 4,
+
+				// top
+				3, 0, 2,
+				2, 0, 1,
+
+				// bottom
+				4, 7, 5,
+				5, 7, 6
+		};
+
+		Mesh mesh = new Mesh(
+				true,
+				vertexData.length,
+				indexData.length,
+				new VertexAttribute(VertexAttributes.Usage.Position, 3, "vertPosition"));
+		mesh.setVertices(vertexData);
+		mesh.setIndices(indexData);
+
+		MeshComponent component = new MeshComponent();
+		component.Shader = shader;
+		component.Color = Color.WHITE;
+		component.Mesh = mesh;
+		return component;
 	}
 }
