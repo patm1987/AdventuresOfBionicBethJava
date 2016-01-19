@@ -54,7 +54,7 @@ public class Transform {
 
 	/*!
 	 * Gets the matrix that takes an object in parent space into local space
-	 * \return the world to local transform represented by this matrix
+	 * \param outInverseTransform	the world to local transform represented by this matrix
 	 */
 	public void getInverseTransform(Matrix4 outInverseTransform) {
 		if (_inverseLocalTransform == null) {
@@ -69,7 +69,7 @@ public class Transform {
 
 	/*!
 	 * Gets the matrix that represents an object in world space
-	 * \return	the local to world transform represented by this matrix
+	 * \param outWorldTransform	the local to world transform represented by this matrix
 	 */
 	public void getWorldTransform(Matrix4 outWorldTransform) {
 		if (_worldTransform == null) {
