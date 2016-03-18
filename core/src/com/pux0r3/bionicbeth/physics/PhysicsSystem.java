@@ -29,6 +29,9 @@ public class PhysicsSystem extends EntitySystem {
 
 	@Override
 	public void update(float deltaTime) {
+		// todo: handle collisions
+		// todo: resolve collisions
+
 		for (Entity entity: _entityList) {
 			TransformComponent transformComponent = _transformMapper.get(entity);
 			PhysicsComponent physicsComponent = _physicsMapper.get(entity);
