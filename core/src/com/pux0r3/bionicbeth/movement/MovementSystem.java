@@ -38,6 +38,9 @@ public class MovementSystem extends EntitySystem {
 			else if (movementComponent.getMoveRight()) {
 				velocity.x = movementComponent.getSpeed();
 			}
+			else {
+				velocity.x = 0.f;
+			}
 
 			physicsComponent.setVelocity(velocity);
 		}
