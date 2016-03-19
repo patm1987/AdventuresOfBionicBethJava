@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector3;
+import com.pux0r3.bionicbeth.physics.collision.CollisionSphereComponent;
 import com.pux0r3.bionicbeth.rendering.Transform;
 import com.pux0r3.bionicbeth.rendering.TransformComponent;
 import org.junit.Assert;
@@ -59,6 +60,35 @@ public class PhysicsSystemTest {
 
 
 	// todo: test detect sphere - sphere overlap
+
+	@Test
+	public void testDetectsSphereSphereOverlap() throws Exception {
+		Engine engine = new Engine();
+		PhysicsSystem physicsSystem = new PhysicsSystem();
+		engine.addSystem(physicsSystem);
+
+		Entity entity0 = new Entity();
+		TransformComponent transformComponent0 = new TransformComponent(new Transform());
+		entity0.add(transformComponent0);
+		PhysicsComponent physicsComponent0 = new PhysicsComponent();
+		entity0.add(physicsComponent0);
+		CollisionSphereComponent collisionSphereComponent0 = new CollisionSphereComponent();
+		entity0.add(collisionSphereComponent0);
+
+		Entity entity1 = new Entity();
+		TransformComponent transformComponent1 = new TransformComponent(new Transform());
+		entity0.add(transformComponent1);
+		PhysicsComponent physicsComponent1 = new PhysicsComponent();
+		entity0.add(physicsComponent1);
+		CollisionSphereComponent collisionSphereComponent1 = new CollisionSphereComponent();
+		entity0.add(collisionSphereComponent1);
+
+		// Todo: set x position so not on top of each other
+		// todo set sphere radius
+		// todo: detect collision
+	}
+
+
 	// todo: test line - line overlap
 	// todo: test sphere - line overlap
 }
