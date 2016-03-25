@@ -78,5 +78,19 @@ public class MovementSystemTest {
 		assertEquals(velocity.x, 5.f, Math.ulp(1.f));
 	}
 
-	// TODO: test active breaking when not pressing left/right
+	@Test
+	public void testStopsAfterMoving() throws Exception {
+		float speed = 5.f;
+
+		_movementComponent.setSpeed(speed);
+		_movementComponent.setMoveRight(true);
+		_engine.update(1.f);
+
+		_movementComponent.setMoveRight(false);
+		_engine.update(1.f);
+
+		Vector3 velocity = new Vector3();
+		_physicsComponent.getVelocity(velocity);
+		assertEquals(velocity.x, 0.f, Math.ulp(1.f));
+	}
 }
