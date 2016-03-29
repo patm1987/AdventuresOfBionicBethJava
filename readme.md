@@ -13,6 +13,8 @@ The current plan is for 3D world geometry with 2D sprites.
 
 Character sprites will be collage-esqe. Ideally actual cutouts from magazines and assembled.
 
+If I go for this l'n'f, I'd need to move all sprites to billboards (which I should've expected). I'll use 3D arts for backgrounds if at all for now.
+
 ### Cast of Characters
 Bionic Beth - the hero. She a cyborg wielding a sledgehammer.
 

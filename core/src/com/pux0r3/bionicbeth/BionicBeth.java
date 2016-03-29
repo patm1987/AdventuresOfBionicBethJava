@@ -22,11 +22,11 @@ import com.pux0r3.bionicbeth.rendering.*;
 
 public class BionicBeth extends ApplicationAdapter {
 
-	Engine _engine;
-	RenderingSystem _renderingSystem;
-	PhysicsSystem _physicsSystem;
+	private Engine _engine;
+	private RenderingSystem _renderingSystem;
+	private PhysicsSystem _physicsSystem;
 
-	Signal<WindowResized> _windowResizedSignal;
+	private Signal<WindowResized> _windowResizedSignal;
 
 	@Override
 	public void create () {
@@ -56,7 +56,7 @@ public class BionicBeth extends ApplicationAdapter {
 		bethEntity.add(new PhysicsComponent());
 
 		BasicMovementComponent movementComponent = new BasicMovementComponent();
-		movementComponent.setSpeed(40.f);
+		movementComponent.setSpeed(60.f);
 		bethEntity.add(movementComponent);
 
 		InputSystem.InputMapping inputMapping = new InputSystem.InputMapping();
